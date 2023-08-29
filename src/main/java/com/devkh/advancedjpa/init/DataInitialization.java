@@ -1,6 +1,10 @@
 package com.devkh.advancedjpa.init;
 
+import com.devkh.advancedjpa.entity.Category;
+import com.devkh.advancedjpa.entity.Price;
 import com.devkh.advancedjpa.entity.Product;
+import com.devkh.advancedjpa.repostitory.CategoryRepository;
+import com.devkh.advancedjpa.repostitory.PriceRepository;
 import com.devkh.advancedjpa.repostitory.ProductRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -16,23 +20,49 @@ import java.util.UUID;
 public class DataInitialization {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
+    private final PriceRepository priceRepository;
+
     @PostConstruct
     public void init(){
 
         System.out.println("Hello everyone");
+        //category
+
+        Category electronic = Category.builder().name("electronic").build();
+        Category smartphone =Category.builder().name("smartPhone").build();
+
+        categoryRepository.saveAll(List.of(electronic,smartphone));
+
+        //price
+
+        Price defaultPrice = Price.builder()
+                .princeIn(BigDecimal.valueOf(1000))
+                .princeOut(BigDecimal.valueOf(1500))
+                .build();
+
+        Price spacialPrice = Price.builder()
+                .princeIn(BigDecimal.valueOf(700))
+                .princeOut(BigDecimal.valueOf(800))
+                .build();
+
+        priceRepository.saveAll(List.of(defaultPrice,spacialPrice));
+
 
         Product product1 = Product.builder()
                 .uuid(UUID.randomUUID().toString())
                 .name("samsung")
                 .description("samsung 12")
-                .price(BigDecimal.valueOf(200))
+                .category(electronic)
+                .prices(List.of(defaultPrice,spacialPrice))
                 .build();
 
         Product product2 = Product.builder()
                 .uuid(UUID.randomUUID().toString())
                 .name("Iphone 12pro")
                 .description("Apple ")
-                .price(BigDecimal.valueOf(1300))
+                .category(smartphone)
+                .prices(List.of(defaultPrice,spacialPrice))
                 .build();
         productRepository.saveAll(List.of(product1,product2));
 
